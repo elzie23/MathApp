@@ -20,8 +20,7 @@ function LoggedInNavigator() {
   const { user } = useContext(AuthContext); 
 
   if (!user) {
-    // If there's no user (not logged in), you could show a login screen or handle it accordingly.
-    return null; // Or render a login screen component
+    return null; 
   }
 
     return (
