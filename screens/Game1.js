@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Alert } from "react-native";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { firestore } from "../firebaseConfig"; // Ensure your Firebase configuration is correct
+import { firestore } from "../firebaseConfig"; 
 
 export default function Game1({ route }) {
     const { userId } = route.params;
@@ -11,16 +11,16 @@ export default function Game1({ route }) {
     const [userInput, setUserInput] = useState("");
     const [showInput, setShowInput] = useState(false);
     const [resultMessage, setResultMessage] = useState("");
-    const [score, setScore] = useState(0); // State for tracking score
+    const [score, setScore] = useState(0); 
 
-    // Fetch the current score from Firestore
+    
     useEffect(() => {
         const fetchScore = async () => {
-            if (!userId) return; // If no userId is passed, do not proceed
+            if (!userId) return; 
             try {
                 const userDoc = await getDoc(doc(firestore, "users", userId));
                 if (userDoc.exists()) {
-                    setScore(userDoc.data().score || 0); // Set score from Firestore
+                    setScore(userDoc.data().score || 0); // postavlja score iz firestore-a
                 } else {
                     console.error("User not found in Firestore.");
                 }
@@ -30,30 +30,30 @@ export default function Game1({ route }) {
             }
         };
         fetchScore();
-    }, [userId]); // Re-fetch score if userId changes
+    }, [userId]); // Re-fetch score ako se userId promjeni
 
-    // Function to update score in Firestore
+    
     const updateScore = async (change) => {
         const newScore = score + change;
-        setScore(newScore); // Update local state immediately
+        setScore(newScore); 
         try {
             await updateDoc(doc(firestore, "users", userId), { score: newScore });
         } catch (error) {
             console.error("Error updating score: ", error);
-            Alert.alert("Error", "There was an issue updating your score. Please try again later.");
+            Alert.alert("Error", "Problem s učitavanjem score-a.");
         }
     };
 
-    // Generate random numbers for the game
+    
     const generateRandomNumbers = () => {
-        setResultMessage(""); // Reset result message
+        setResultMessage(""); 
         const generatedNumbers = [];
         let lastNumber = null;
         for (let i = 0; i < 10; i++) {
             let randomNumber;
             do {
                 randomNumber = Math.floor(Math.random() * 10);
-            } while (randomNumber === lastNumber); // Ensure numbers are not repeated consecutively
+            } while (randomNumber === lastNumber); // brojevi se ne ponavljaju jedan za drugim
             generatedNumbers.push(randomNumber);
             lastNumber = randomNumber;
         }
@@ -70,22 +70,22 @@ export default function Game1({ route }) {
                 setShowGame(false);
                 setShowInput(true);
             }
-        }, 800); // 800ms interval between numbers
+        }, 800); // 800ms interval 
 
         return () => clearInterval(intervalId);
     };
 
-    // Handle user's input and check if it's correct
+    
     const handleSubmit = async () => {
         const sum = numbers.reduce((a, b) => a + b, 0);
         const isCorrect = parseInt(userInput) === sum;
 
         try {
             if (isCorrect) {
-                await updateScore(5); // Add 5 points
+                await updateScore(5); 
                 setResultMessage("Čestitamo! Uneseni broj je točan.");
             } else {
-                await updateScore(-7); // Subtract 7 points
+                await updateScore(-7); 
                 setResultMessage("Pogrešno! Uneseni broj nije točan.");
             }
         } catch (error) {
@@ -94,7 +94,7 @@ export default function Game1({ route }) {
             setShowInput(false);
             setNumbers([]);
             setCurrentNumber(null);
-            setUserInput(""); // Reset input field
+            setUserInput(""); 
         }
     };
 
